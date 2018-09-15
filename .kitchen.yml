@@ -55,3 +55,10 @@ platforms:
 
 suites:
   - name: default
+  - name: secure_mongo
+    provisioner:
+      extra_vars:
+        st2_config:
+          database:
+            username: st2mongo
+            password: Sw33tPassw0rd
