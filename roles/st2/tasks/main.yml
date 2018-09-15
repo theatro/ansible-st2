@@ -68,6 +68,20 @@
   when: (st2_config.auth|default({})).enable|default(st2_auth_enable)
   tags: st2, auth
 
+- name: Add the st2 mongo user
+  when: '"database" in st2_config and "username" in st2_config.database and "password" in st2_config.database'
+  include_role:
+    name: mongodb
+    tasks_from: mongodb_auth
+  vars:
+    mongodb_enable_auth: yes
+    mongodb_default_admin_password: "{{ st2_config.database.password }}"
+    mongodb_users:
+      - db: "{{ st2_config.database.db_name | default('st2') }}"
+        username: "{{ st2_config.database.username }}"
+        password: "{{ st2_config.database.password }}"
+        roles: readWrite,dbAdmin
+
 - name: Configure StackStorm st2.conf settings
   # Ansible nested loop to iterate through a hash of hashes
   include: config.yml _conf_section_name={{ _conf_section.key }} _conf_options={{ _conf_section.value }}
