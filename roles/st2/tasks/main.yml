@@ -72,6 +72,20 @@
   when: (st2_config.auth|default({})).enable|default(st2_auth_enable)
   tags: st2, auth
 
+- name: Add the st2 mongo user
+  when: '"database" in st2_config and "username" in st2_config.database and "password" in st2_config.database'
+  include_role:
+    name: mongodb
+    tasks_from: mongodb_auth
+  vars:
+    mongodb_enable_auth: yes
+    mongodb_default_admin_password: "{{ st2_config.database.password }}"
+    mongodb_users:
+      - db: "{{ st2_config.database.db_name | default('st2') }}"
+        username: "{{ st2_config.database.username }}"
+        password: "{{ st2_config.database.password }}"
+        roles: readWrite,dbAdmin
+
 # If rabbitmq is not running on localhost, then the vhost & user tasks need to be delegated to the appropriate host.
 # That is out of scope for this role, and should be handled by the playbook user.
 - name: Configure RabbitMQ vhost for st2
