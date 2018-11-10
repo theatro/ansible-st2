@@ -1,4 +1,6 @@
 [submodule "roles/StackStorm.stackstorm"]
 	path = roles/StackStorm.stackstorm
-	url = https://github.com/StackStorm/ansible-st2.git
-	branch = master
+	#url = https://github.com/StackStorm/ansible-st2.git
+	#branch = master
+	url = https://github.com/theatro/ansible-st2.git
+	branch = ansible2.5-support
