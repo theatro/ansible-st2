@@ -1,0 +1,4 @@
+[submodule "roles/StackStorm.stackstorm"]
+	path = roles/StackStorm.stackstorm
+	url = https://github.com/StackStorm/ansible-st2.git
+	branch = master

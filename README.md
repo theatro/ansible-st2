@@ -1,3 +1,18 @@
+# Ansible-st2-secure FORK
+This fork is focused on providing security out-of-the-box for StackStorm. Original README follows.
+Note that the original stackstorm role is include via git submodule, so make sure to use one of these:
+
+```
+git clone --recurse-submodules https://github.com/theatro/ansible-st2-secure.git
+```
+or
+```
+git clone https://github.com/theatro/ansible-st2-secure.git
+cd ansible-st2-secure
+git submodule init
+git submodule update
+```
+
 # Ansible-st2
 Ansible playbooks to deploy [StackStorm](https://github.com/stackstorm/st2).
 > [StackStorm](http://stackstorm.com/) is event-driven automation platform written in Python.
