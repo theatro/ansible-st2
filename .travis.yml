@@ -6,6 +6,7 @@ services: docker
 branches:
   only:
     - master
+    - secure
 
 env:
   # default is stable repo
