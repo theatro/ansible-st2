@@ -56,7 +56,6 @@ platforms:
         - /sys/fs/cgroup:/sys/fs/cgroup:ro
 
 suites:
-  - name: default
   - name: secure_mongo
     provisioner:
       extra_vars:
@@ -65,3 +64,4 @@ suites:
             username: st2mongo
             password: Sw33tPassw0rd
             db_name: st2
+  - name: default
