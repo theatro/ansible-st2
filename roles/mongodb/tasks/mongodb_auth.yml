@@ -149,5 +149,5 @@
   loop_control:
     label: "{{ item.username }} on {{ item.db }}"
   loop: "{{ mongodb_users }}"
-  no_log: yes
+  no_log: "{{ ansible_verbosity > 1 }}" # password revealed in more verbose modes
 
