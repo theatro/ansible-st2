@@ -1,9 +1,39 @@
 ---
-- name: Ensure pymongo is installed for the mongodb_user ansible module
+# pymongo is needed for mongodb_user module to enable mongo_auth.
+# pymongo 3.2+ is required to work with mongo 3.2+
+# system packages are:
+#  - 2.5 on EL 6 and EL 7
+#  - 2.6.3 on Ubuntu 14 Trusty
+#  - 3.2 on Ubuntu 16 Xenial
+
+- name: Install pymongo on EL 6
+  when: ansible_facts.os_family == 'RedHat' and ansible_facts.distribution_major_version == '6'
   become: yes
-  package:
-    name: python-pymongo
-    state: present
+  apt:
+    name: http://springdale.math.ias.edu/data/puias/computational/6/x86_64/python-pymongo-3.2-1.sdl6.x86_64.rpm
+
+- name: Install pymongo on EL 7
+  when: ansible_facts.os_family == 'RedHat' and ansible_facts.distribution_major_version == '7'
+  become: yes
+  apt:
+    name: http://dl.fedoraproject.org/pub/fedora/linux/releases/27/Everything/x86_64/os/Packages/p/python2-pymongo-3.4.0-5.fc27.x86_64.rpm
+
+- name: Install pymongo on Ubuntu 14 Trusty
+  when: ansible_facts.distribution == 'Ubuntu' and ansible_facts.distribution_major_version == '14'
+  become: yes
+  apt:
+    deb: "{{ item }}"
+  loop:
+    # from Ubuntu 16 Xenial
+    - http://archive.ubuntu.com/ubuntu/pool/universe/p/pymongo/python-bson_3.2-1build1_amd64.deb
+    - http://archive.ubuntu.com/ubuntu/pool/universe/p/pymongo/python-pymongo_3.2-1build1_amd64.deb
+    - http://archive.ubuntu.com/ubuntu/pool/universe/p/pymongo/python-pymongo-ext_3.2-1build1_amd64.deb
+
+- name: Install pymongo on Ubuntu 16 Xenial
+  when: ansible_facts.distribution == 'Ubuntu' and ansible_facts.distribution_major_version == '16'
+  become: yes
+  apt:
+    name: python-pymongo-ext
 
 - name: See if mongodb authorization is enabled and users are configured
   command: 'mongo --eval "db.getUsers()" admin'
