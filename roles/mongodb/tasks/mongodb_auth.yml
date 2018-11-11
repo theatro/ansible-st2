@@ -10,13 +10,17 @@
   when: ansible_facts.os_family == 'RedHat' and ansible_facts.distribution_major_version == '6'
   become: yes
   yum:
-    name: http://springdale.math.ias.edu/data/puias/computational/6/x86_64/python-pymongo-3.2-1.sdl6.x86_64.rpm
+    name:
+      - http://springdale.math.ias.edu/data/puias/computational/6/x86_64//python-bson-3.2-1.sdl6.x86_64.rpm
+      - http://springdale.math.ias.edu/data/puias/computational/6/x86_64/python-pymongo-3.2-1.sdl6.x86_64.rpm
 
 - name: Install pymongo on EL 7
   when: ansible_facts.os_family == 'RedHat' and ansible_facts.distribution_major_version == '7'
   become: yes
   yum:
-    name: http://dl.fedoraproject.org/pub/fedora/linux/releases/27/Everything/x86_64/os/Packages/p/python2-pymongo-3.4.0-5.fc27.x86_64.rpm
+    name:
+      - http://dl.fedoraproject.org/pub/fedora/linux/releases/27/Everything/x86_64/os/Packages/p/python2-bson-3.4.0-5.fc27.x86_64.rpm
+      - http://dl.fedoraproject.org/pub/fedora/linux/releases/27/Everything/x86_64/os/Packages/p/python2-pymongo-3.4.0-5.fc27.x86_64.rpm
 
 - name: Install pymongo on Ubuntu 14 Trusty
   when: ansible_facts.distribution == 'Ubuntu' and ansible_facts.distribution_major_version == '14'
