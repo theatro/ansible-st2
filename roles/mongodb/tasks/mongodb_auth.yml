@@ -47,11 +47,6 @@
   changed_when: no # this does not change anything, it only checks
   failed_when: no # The rc determines whether or not auth is required to create/update the admin user
 
-- name: Show mongodb auth check output
-  debug:
-    var: _mongo_authorization
-    verbosity: 2
-
 - name: Warn about default credentials
   when: "mongodb_admin_password == 'Ch@ngeMe'"
   debug:
