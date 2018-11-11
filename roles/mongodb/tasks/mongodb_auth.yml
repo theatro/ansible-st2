@@ -149,5 +149,6 @@
     login_database: "{{ mongodb_admin_db }}"
   loop_control:
     label: "{{ item.username }} on {{ item.db }}"
-  with_items: "{{ mongodb_users }}"
+  loop: "{{ mongodb_users }}"
+  no_log: yes
 
