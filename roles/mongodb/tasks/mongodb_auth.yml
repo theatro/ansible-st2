@@ -1,21 +1,15 @@
 ---
-# pymongo is needed for mongodb_user module to enable mongo auth.
-# pymongo 3.2+ is required to work with mongo 3.2+
-# system packages are:
-#  - 2.5.2 on EL 6 and EL 7
-#  - 2.6.3 on Ubuntu 14 Trusty
-#  - 3.2 on Ubuntu 16 Xenial
-
-- name: Install pip (for the installation of pymongo 3.2+)
+- name: Install pip (for the installation of pymongo)
   become: yes
   package:
-    name: "python{% if ansible_facts.os_family == 'RedHat' and ansible_facts.distribution_major_version == '7' %}2{% endif %}-pip"
+    name: python-pip
     state: present
 
-- name: Install pymongo
+- name: Install pymongo (for the mongodb_user module)
+  # pymongo 3.2+ is required to work with mongo 3.2+. system packages are too old.
   become: yes
   pip:
-    name: pymongo
+    name: "pymongo=={{ mongodb_major_minor_version }}"
 
 - name: See if mongodb authorization is enabled and users are configured
   command: 'mongo --eval "db.getUsers()" admin'
