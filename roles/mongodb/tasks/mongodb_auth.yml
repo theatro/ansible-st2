@@ -1,18 +1,21 @@
 ---
-# pymongo is needed for mongodb_user module to enable mongo_auth.
+# pymongo is needed for mongodb_user module to enable mongo auth.
 # pymongo 3.2+ is required to work with mongo 3.2+
 # system packages are:
-#  - 2.5 on EL 6 and EL 7
+#  - 2.5.2 on EL 6 and EL 7
 #  - 2.6.3 on Ubuntu 14 Trusty
 #  - 3.2 on Ubuntu 16 Xenial
-# Plus, we cannot guarantee that pip is installed at system level, so we instal it in a virtualenv.
+
+- name: Install pip (for the installation of pymongo 3.2+)
+  become: yes
+  package:
+    name: "python{% if ansible_facts.os_family == 'RedHat' and ansible_facts.distribution_major_version == '7' %}2{% endif %}-pip"
+    state: present
 
 - name: Install pymongo
+  become: yes
   pip:
     name: pymongo
-    virtualenv: /tmp/ansible-pymongo-venv
-    virtualenv_site_packages: yes
-  register: _pymongo
 
 - name: See if mongodb authorization is enabled and users are configured
   command: 'mongo --eval "db.getUsers()" admin'
@@ -32,8 +35,6 @@
     msg: "[WARNING] Using default admin credentials for mongodb admin account! Please change them!"
 
 - name: Add mongo admin
-  vars:
-    ansible_python_interpreter: "{{ _pymongo.virtualenv }}/bin/python"
   mongodb_user:
     state: present
 
@@ -100,8 +101,6 @@
 #    filter: restart mongodb
 
 - name: Add additional mongo users
-  vars:
-    ansible_python_interpreter: "{{ _pymongo.virtualenv }}/bin/python"
   mongodb_user:
     state: present
 
