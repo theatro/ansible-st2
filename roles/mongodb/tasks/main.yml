@@ -13,5 +13,5 @@
 
 - name: Enable mongodb authentication
   when: mongodb_enable_auth
-  include: mongodb_auth.yml
+  include_tasks: mongodb_auth.yml
   tags: [databases, mongodb]
