@@ -36,3 +36,9 @@
     - reload bwc_rbac
   tags:
     - ewc-smoke-tests
+
+- name: Reload RBAC definitions to clean up smoke_tests user, roles, & assignments
+  become: yes
+  command: st2-apply-rbac-definitions --config-file /etc/st2/st2.conf
+  tags:
+    - ewc-smoke-tests
