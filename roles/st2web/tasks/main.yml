@@ -57,7 +57,7 @@
 - name: Template Nginx config
   become: yes
   template:
-    src: nginx/conf/st2.conf.j2
+    src: nginx/st2.conf.j2
     dest: /etc/nginx/sites-available/{{ st2web_site_name }}.conf
   #command: cp /usr/share/doc/st2/conf/nginx/st2.conf /etc/nginx/sites-available/
   #args:
