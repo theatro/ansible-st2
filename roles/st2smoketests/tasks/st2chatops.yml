@@ -1,4 +1,11 @@
 ---
+- name: Debug st2chatops port user (for travis.ci debugging)
+  become: yes
+  # default of EXPRESS_PORT=8081 in /opt/stackstorm/chatops/st2chatops.env
+  command: 'ss -anpt src :8081 or dst :8081'
+  register: _st2chatops_port_check
+  changed_when: no
+
 - name: Verify st2chatops using bin/hubot
   # when editing, make sure it works for at least 2 adapters: 'shell' and 'slack'
   shell: timeout 10 bash -c '(sleep 5; echo exit ) | bin/hubot'
@@ -9,9 +16,6 @@
   register: hubot_output
   failed_when: no
   changed_when: no
-  until: '"EADDRINUSE" not in hubot_output.stdout'
-  retries: 6
-  delay: 10
 
 # Additional task to provide better error message
 - name: Fail if st2chatops couldn't load st2 commands
