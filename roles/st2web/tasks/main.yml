@@ -53,11 +53,15 @@
   import_tasks: certificate.yml
   tags: st2web, certificate
 
-- name: Copy Nginx config
+#- name: Copy Nginx config
+- name: Template Nginx config
   become: yes
-  command: cp /usr/share/doc/st2/conf/nginx/st2.conf /etc/nginx/sites-available/
-  args:
-    creates: /etc/nginx/sites-available/st2.conf
+  template:
+    src: nginx/conf/st2.conf.j2
+    dest: /etc/nginx/sites-available/{{ st2web_site_name }}.conf
+  #command: cp /usr/share/doc/st2/conf/nginx/st2.conf /etc/nginx/sites-available/
+  #args:
+  #  creates: /etc/nginx/sites-available/st2.conf
   notify:
     - restart nginx
   tags: st2web
@@ -71,3 +75,6 @@
   notify:
     - restart nginx
   tags: st2web
+
+# TODO: when selinux is enabled ensure file labels / context on st2web_root allow access
+# TODO: validate file access permissions on st2web_root

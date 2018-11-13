@@ -9,10 +9,11 @@
   become: yes
   file:
     state: directory
-    dest: /etc/ssl/st2
+    dest: "{{ item }}"
     mode: 0700
     owner: root
     group: root
+  loop: "{{ [st2web_ssl_crt_file|dirname, st2web_ssl_key_file|dirname] | unique }}"
 
 - name: Save custom SSL certificate
   become: yes
@@ -24,9 +25,9 @@
     group: root
   loop:
     - cert: "{{ st2web_ssl_certificate }}"
-      path: /etc/ssl/st2/st2.crt
+      path: "{{ st2web_ssl_crt_file }}"
     - cert: "{{ st2web_ssl_certificate_key }}"
-      path: /etc/ssl/st2/st2.key
+      path: "{{ st2web_ssl_key_file }}"
   no_log: yes
   notify:
     - restart nginx
@@ -34,9 +35,9 @@
 
 - name: Generate self-signed SSL certificate
   become: yes
-  shell: openssl req -x509 -newkey rsa:2048 -keyout /etc/ssl/st2/st2.key -out /etc/ssl/st2/st2.crt -days 365 -nodes -subj "/C=US/ST=California/L=Palo Alto/O=StackStorm/OU=Information Technology/CN=$(hostname)"
+  shell: 'openssl req -x509 -newkey rsa:2048 -keyout {{ st2web_ssl_key_file }} -out {{ st2web_ssl_crt_file }} -days 365 -nodes -subj "/C=US/ST=California/L=Palo Alto/O=StackStorm/OU=Information Technology/CN=$(hostname)"'
   args:
-    creates: /etc/ssl/st2/st2.key
+    creates: "{{ st2web_ssl_key_file }}"
   notify:
     - restart nginx
   when: not st2web_ssl_certificate and not st2web_ssl_certificate_key

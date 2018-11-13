@@ -10,6 +10,11 @@ st2web_ssl_certificate_key: null
 
 ### VARS FOR nginc/conf/st2.conf ###
 
+# /etc/nginx/sites-available/{{ st2web_site_name }}.conf
+st2web_site_name: st2
+# logs http in {{ st2web_log_name }}.{access,error}.log, https in ssl-{{ st2web_log_name }}name.{access,error}.log
+st2web_log_name: st2webui
+
 st2web_ssl_crt_file: /etc/ssl/st2/st2.crt
 st2web_ssl_key_file: /etc/ssl/st2/st2.key
 
@@ -29,6 +34,3 @@ st2web_backends:
   auth: http://127.0.0.1:9100/
 
 st2web_root: /opt/stackstorm/static/webui/
-
-# http in name.{access,error}.log, https in ssl-name.{access,error}.log
-st2web_log_name: st2webui
