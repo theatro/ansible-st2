@@ -7,3 +7,28 @@ st2web_ssl_certificate: null
 
 # String with custom SSL certificate private key. If not provided, self-signed certificate will be generated.
 st2web_ssl_certificate_key: null
+
+### VARS FOR nginc/conf/st2.conf ###
+
+st2web_ssl_crt_file: /etc/ssl/st2/st2.crt
+st2web_ssl_key_file: /etc/ssl/st2/st2.key
+
+st2web_ssl_protocols:
+  - TLSv1
+  - TLSv1.1
+  - TLSv1.2
+
+# listen_host:http_port redirects to listen_host:https_port
+st2web_listen_host: *
+st2web_http_port: 80
+st2web_https_port: 443
+
+st2web_backends:
+  api: http://127.0.0.1:9101/
+  stream: http://127.0.0.1:9102/
+  auth: http://127.0.0.1:9100/
+
+st2web_root: /opt/stackstorm/static/webui/
+
+# http in name.{access,error}.log, https in ssl-name.{access,error}.log
+st2web_log_name: st2webui
