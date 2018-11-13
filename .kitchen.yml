@@ -62,6 +62,8 @@ suites:
         st2_config:
           database:
             username: st2mongo
-            password: Sw33tPassw0rd
+            password: Sw33tM0ng0Passw0rd
             db_name: st2
+          messaging:
+            url: amqp://st2rmq:S33tRa44itPassw0rd@127.0.0.1:5672/st2
   - name: default
