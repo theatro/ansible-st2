@@ -40,6 +40,8 @@
     database: "{{ mongodb_admin_db }}"
     roles: userAdminAnyDatabase
 
+    # This does NOT include the mongo_auth_user.yml because of the
+    # special omit handling of login_* when mongo auth is not enabled/configured
     login_host: "{{ mongodb_host }}"
     login_port: "{{ mongodb_port }}"
     login_user: "{{ (_mongo_authorization.rc == 0) | ternary(omit, mongodb_admin_username) }}"
@@ -95,31 +97,10 @@
 #    filter: restart mongodb
 
 - name: Add additional mongo users
-  mongodb_user:
-    state: present
-
-    # NOTE: on_create is idempotent, always is not.
-    # With `update_password: on_create`, mongodb_user checks to see if the user
-    # (a) exists on the db, and (b) has the same roles,
-    # and then it only adds the user if it's not there or the roles have changed.
-    # With `update_password: always`, mongodb_user cannot tell if the password
-    # needs to be changed without attempting a login with those credentials.
-    # But mongodb_user does not currently implement such a check.
-    # A comment in mongodb_user points to https://jira.mongodb.org/browse/SERVER-22848
-    update_password: "{{ mongodb_force_update_password|ternary('always', 'on_create') }}"
-
-    name: "{{ item.username }}"
-    password: "{{ item.password }}"
-    database: "{{ item.db }}"
-    roles: "{{ item.roles|default('readWrite') }}"
-
-    login_host: "{{ mongodb_host }}"
-    login_port: "{{ mongodb_port }}"
-    login_user: "{{ mongodb_admin_username }}"
-    login_password: "{{ mongodb_admin_password }}"
-    login_database: "{{ mongodb_admin_db }}"
+  include_tasks: mongodb_auth_user.yml
   loop_control:
-    label: "{{ item.username }} on {{ item.db }}"
+    loop_var: _mongodb_user
   loop: "{{ mongodb_users }}"
-  no_log: "{{ ansible_verbosity > 1 }}" # password revealed in more verbose modes
-
+  # using loop_control: label does not obscure the password in output for verbosity > 1
+  # So, loop over an include where the task name will include the username + db, but the loop var won't print out.
+  no_log: yes
