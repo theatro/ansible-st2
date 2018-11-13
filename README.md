@@ -50,6 +50,8 @@ Below is the list of variables you can redefine in your playbook to customize st
 
 | Variable                 | Default       | Description  |
 | ------------------------ | ------------- | ------------ |
+| **stackstorm.yml playbook**
+| `st2_hosts`              | `all`         | Hosts pattern to install StackStorm on. Specify this via extra-vars or in your inventory. This makes the playbook usable with any inventory without requiring the use of `--limit`.
 | **st2repo**
 | `st2repo_name`           | `stable`      | StackStorm PackageCloud repository to install. [`stable`](https://packagecloud.io/StackStorm/stable/), [`unstable`](https://packagecloud.io/StackStorm/unstable/), [`staging-stable`](https://packagecloud.io/StackStorm/staging-stable/), [`staging-unstable`](https://packagecloud.io/StackStorm/staging-unstable/)
 | **st2**
