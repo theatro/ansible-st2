@@ -24,7 +24,7 @@ st2web_ssl_protocols:
   - TLSv1.2
 
 # listen_host:http_port redirects to listen_host:https_port
-st2web_listen_host: *
+st2web_listen_host: '*'
 st2web_http_port: 80
 st2web_https_port: 443
 
