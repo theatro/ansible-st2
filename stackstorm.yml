@@ -2,18 +2,43 @@
 - name: Install st2
   hosts: "{{ st2_hosts | default('all') }}"
   roles:
-    - mongodb
-    - rabbitmq
-    - postgresql
-    - st2repo
-    - st2
-    - st2mistral
-    - nginx
-    - st2web
-    - nodejs
-    - st2chatops
-    - st2smoketests
-    - role: bwc
+    - name: Mongo | Main DB for StackStorm
+      role: mongodb
+
+    - name: RabbitMQ | Message Broker for StackStorm
+      role: rabbitmq
+
+    - name: Postgres | Main DB for StackStorm Mistral
+      role: postgresql
+
+    - name: ST2 | Add StackStorm PackageCloud repositories
+      role: st2repo
+
+    - name: ST2 | Install and configure StackStorm (st2)
+      role: st2
+
+    - name: ST2 | Install and configure st2mistral
+      role: st2mistral
+
+    - name: Nginx | Access point for st2web
+      role: nginx
+
+    - name: ST2 | Install st2web
+      role: st2web
+
+    - name: Node.js | Runs st2chatops with Hubot
+      role: nodejs
+
+    - name: ST2 | Install st2chatops with "slack" hubot adapter
+      role: st2chatops
+
+    - name: ST2 | Verify StackStorm installation
+      role: st2smoketests
+
+    - name: EWC | Install Extreme Workflow Composer (enterprise)
+      role: bwc
       when: bwc_license is defined and bwc_license is not none
-    - role: bwc_smoketests
+
+    - name: EWC | Verify Extreme Workflow Composer installation (enterprise)
+      role: bwc_smoketests
       when: bwc_license is defined and bwc_license is not none
