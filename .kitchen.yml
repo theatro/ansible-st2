@@ -66,4 +66,6 @@ suites:
             db_name: st2
           messaging:
             url: amqp://st2rmq:S33tRa44itPassw0rd@127.0.0.1:5672/st2
+        rabbitmq_plugins:
+          - rabbitmq_management
   - name: default
