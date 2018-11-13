@@ -2,6 +2,11 @@
 This fork is focused on providing security out-of-the-box for StackStorm. Original README follows.
 Note that the original stackstorm role is include via git submodule, so make sure to use one of these:
 
+WARNING: This branch is a development branch for the security features of ansible-st2.
+Whenever upstream StackStorm/ansible-st2 is ready to accept PRs, various files will be copied from
+this branch. Force pushing is valid during development to re-trigger Travis or to rebase/consolidate
+commits into a more logical timeline.
+
 ```
 git clone --recurse-submodules https://github.com/theatro/ansible-st2-secure.git
 ```
