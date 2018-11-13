@@ -35,5 +35,6 @@
     loop_var: _rmq_user
     label: "{{ _rmq_user.user }}"
   loop: "{{ rabbitmq_users }}"
-  no_log: "{{ ansible_verbosity > 1 }}" # password revealed in more verbose modes
+  verbosity: 0
+  #no_log: "{{ ansible_verbosity > 1 }}" # password revealed in more verbose modes
   tags: rabbitmq
