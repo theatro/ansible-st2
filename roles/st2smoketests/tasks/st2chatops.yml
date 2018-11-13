@@ -9,6 +9,9 @@
   register: hubot_output
   failed_when: no
   changed_when: no
+  until: '"EADDRINUSE" not in hubot_output.stdout'
+  retries: 6
+  delay: 10
 
 # Additional task to provide better error message
 - name: Fail if st2chatops couldn't load st2 commands
