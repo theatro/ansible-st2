@@ -1,9 +1,15 @@
 ---
+- name: Get installed st2 version to select required node.js version
+  command: /opt/stackstorm/st2/bin/python -c 'import st2common; print st2common.__version__'
+  changed_when: no
+  check_mode: no
+  register: _st2_version_installed
+
 - name: Install Node.js
   import_role:
     name: nodejs
   vars:
-    nodejs_major_version: "6"
+    nodejs_major_version: "{{ st2chatops_nodejs_major_version }}"
 
 - name: Assert st2chatops_hubot_adapter is specified
   fail:
