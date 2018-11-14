@@ -5,7 +5,7 @@
   check_mode: no
   register: _st2_version_installed
 
-- name: Install Node.js
+- name: "Install Node.js {{ st2chatops_nodejs_major_version }}"
   import_role:
     name: nodejs
   vars:
