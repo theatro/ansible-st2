@@ -1,4 +1,10 @@
 ---
+- name: Install Node.js
+  import_role:
+    name: nodejs
+  vars:
+    nodejs_major_version: "6"
+
 - name: Assert st2chatops_hubot_adapter is specified
   fail:
     msg: >

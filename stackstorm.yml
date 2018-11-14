@@ -26,10 +26,7 @@
     - name: ST2 | Install st2web
       role: st2web
 
-    - name: Node.js | Runs st2chatops with Hubot
-      role: nodejs
-
-    - name: ST2 | Install st2chatops with "slack" hubot adapter
+    - name: ST2 | Install st2chatops with node.js and a hubot adapter
       role: st2chatops
 
     - name: ST2 | Verify StackStorm installation
