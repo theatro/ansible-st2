@@ -22,7 +22,8 @@ galaxy_info:
     - Extreme Workflow Composer
     - repositories
     - packagecloud
-  dependencies:
-    - role: st2repo
-    - role: st2
-    - role: st2web
+  dependencies: []
+    # deps should be imports/includes...
+    #- role: st2repo
+    #- role: st2
+    #- role: st2web
