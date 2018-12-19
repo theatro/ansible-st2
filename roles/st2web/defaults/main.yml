@@ -8,7 +8,7 @@ st2web_ssl_certificate: null
 # String with custom SSL certificate private key. If not provided, self-signed certificate will be generated.
 st2web_ssl_certificate_key: null
 
-### VARS FOR nginc/conf/st2.conf ###
+### VARS FOR nginx/conf/st2.conf ###
 
 # /etc/nginx/sites-available/{{ st2web_site_name }}.conf
 st2web_site_name: st2

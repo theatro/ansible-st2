@@ -1,4 +1,4 @@
 ---
-- name: Install nodejs on {{ ansible_facts.distribution }}
+- name: Install nodejs {{ nodejs_major_version }} on {{ ansible_facts.distribution }}
   include_tasks: nodejs_{{ ansible_facts.pkg_mgr }}.yml
   tags: nodejs
