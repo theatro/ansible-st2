@@ -43,9 +43,7 @@
   yum:
     name: mongodb-org-{{ mongodb_version }}*
     state: present
-    # TODO: Allow yum downgrade since Ansible 2.4
-    # https://github.com/ansible/ansible/pull/21516
-    # allow_downgrade: yes
+    allow_downgrade: yes
   register: _task
   retries: 5
   delay: 3
