@@ -1,8 +1,7 @@
-# CircleCI is used only for linter and syntax checks
+# CircleCI is used only for Ansible-Lint and Ansible Syntax checks
 version: 2
 jobs:
-  # Run Ansible-lint checks
-  ansible-lint:
+  build:
     docker:
       - image: williamyeh/ansible:ubuntu16.04
     steps:
@@ -20,26 +19,3 @@ jobs:
           name: Ansible-lint check
           command: |
             ansible-lint -x 204 -v roles/*/*/*.yaml roles/*/*/*.yml stackstorm.yml
-
-  # Run YAML lint checks
-  yaml-lint:
-    docker:
-      - image: sdesbure/yamllint
-    steps:
-      - checkout
-      - run:
-          name: YAML lint checks
-          command: yamllint .
-
-workflows:
-  version: 2
-  helm:
-    jobs:
-      - ansible-lint
-      - yaml-lint
-
-experimental:
-  notify:
-    branches:
-      only:
-        - master

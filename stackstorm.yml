@@ -33,9 +33,9 @@
       role: st2smoketests
 
     - name: EWC | Install Extreme Workflow Composer (enterprise)
-      role: bwc
-      when: bwc_license is defined and bwc_license is not none
+      role: ewc
+      when: ewc_license is defined and ewc_license is not none
 
     - name: EWC | Verify Extreme Workflow Composer installation (enterprise)
-      role: bwc_smoketests
-      when: bwc_license is defined and bwc_license is not none
+      role: ewc_smoketests
+      when: ewc_license is defined and ewc_license is not none

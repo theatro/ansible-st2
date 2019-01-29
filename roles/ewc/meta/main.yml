@@ -1,0 +1,28 @@
+---
+galaxy_info:
+  description: Install EWC Entperprise components, setup RBAC and LDAP
+  author: lakshmi-kannan
+  company: StackStorm
+  license: Apache 2.0
+  min_ansible_version: 2.5
+  platforms:
+    - name: Ubuntu
+      versions:
+        - trusty
+        - xenial
+    - name: EL
+      versions:
+        - 6
+        - 7
+  galaxy_tags:
+    - system
+    - stackstorm
+    - bwc
+    - ewc
+    - repositories
+    - packagecloud
+  dependencies: []
+    # deps should be imports/includes...
+    #- role: st2repo
+    #- role: st2
+    #- role: st2web

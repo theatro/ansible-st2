@@ -1,0 +1,146 @@
+---
+- name: Install libffi-devel on EL6
+  become: yes
+  package:
+    name: http://rpmfind.net/linux/centos/6/os/x86_64/Packages/libffi-devel-3.0.5-3.2.el6.x86_64.rpm
+    state: present
+  register: _task
+  retries: 5
+  delay: 3
+  until: _task is succeeded
+  when: ansible_facts.os_family == "RedHat" and ansible_facts.distribution_major_version == "6"
+  tags: st2
+
+- name: Install latest st2 package, auto-update
+  become: yes
+  package:
+    name: st2
+    state: latest
+  register: _task
+  retries: 5
+  delay: 3
+  until: _task is succeeded
+  when: st2_version == "latest"
+  notify:
+    - restart st2
+    - reload st2
+  tags: st2, skip_ansible_lint
+
+- name: Install present st2 package, no auto-update
+  become: yes
+  package:
+    name: st2
+    state: present
+  register: _task
+  retries: 5
+  delay: 3
+  until: _task is succeeded
+  when: st2_version == "present"
+  notify:
+    - restart st2
+    - reload st2
+  tags: st2
+
+- name: Install pinned st2 package
+  become: yes
+  package:
+    name: st2{{ '-' if ansible_facts.pkg_mgr == 'yum' else '=' }}{{ st2_version }}-{{ st2_revision }}
+    state: present
+  register: _task
+  retries: 5
+  delay: 3
+  until: _task is succeeded
+  when:
+    - st2_version != "latest"
+    - st2_version != "present"
+  notify:
+    - restart st2
+    - reload st2
+  tags: st2
+
+- name: Perform st2 version related operations
+  import_tasks: version.yml
+  tags: st2, version
+
+- name: Create and configure StackStorm system user
+  import_tasks: user.yml
+  tags: st2, user
+
+- name: Configure StackStorm authentication
+  import_tasks: auth.yml
+  # Use st2_config.auth.enable setting if available, otherwise use st2_auth_enable
+  when: (st2_config.auth|default({})).enable|default(st2_auth_enable)
+  tags: st2, auth
+
+- name: Add the st2 mongo user
+  when: '"database" in st2_config and "username" in st2_config.database and "password" in st2_config.database'
+  include_role:
+    name: mongodb
+    tasks_from: mongodb_auth
+  vars:
+    mongodb_enable_auth: yes
+    mongodb_default_admin_password: "{{ st2_config.database.password }}"
+    mongodb_users:
+      - db: "{{ st2_config.database.db_name | default('st2') }}"
+        username: "{{ st2_config.database.username }}"
+        password: "{{ st2_config.database.password }}"
+        roles: readWrite,dbAdmin
+
+# If rabbitmq is not running on localhost, then the vhost & user tasks need to be delegated to the appropriate host.
+# That is out of scope for this role, and should be handled by the playbook user.
+- name: Configure RabbitMQ vhost for st2
+  when: '"messaging" in st2_config and "url" in st2_config.messaging and (st2_config.messaging.url | urlsplit("hostname") in ["127.0.0.1", "localhost"])'
+  include_role:
+    name: rabbitmq
+    tasks_from: rabbitmq_vhosts
+  vars:
+    rabbitmq_vhosts:
+      # vhost is either '/' or the encoded version of everything after the '/'
+      # an empty string != '/' which would need to be encoded as %2F
+      - '{{ (st2_config.messaging.url | urlsplit("path"))[1:] }}'  # [1:] = do not include initial /
+      - '/'
+
+- name: Configure RabbitMQ user for st2
+  when: '"messaging" in st2_config and "url" in st2_config.messaging and (st2_config.messaging.url | urlsplit("hostname") in ["127.0.0.1", "localhost"])'
+  include_role:
+    name: rabbitmq
+    tasks_from: rabbitmq_users
+  vars:
+    rabbitmq_keep_guest_user_default: '{{ st2_config.messaging.url | urlsplit("username") == "guest" }}'
+    rabbitmq_users:
+      - user: '{{ st2_config.messaging.url | urlsplit("username") }}'
+        password: '{{ st2_config.messaging.url | urlsplit("password") }}'
+        permissions:
+          - vhost: '{{ (st2_config.messaging.url | urlsplit("path"))[1:] | default("/", true) }}'
+            configure_priv: .*
+            read_priv: .*
+            write_priv: .*
+
+- name: Configure StackStorm st2.conf settings
+  # Ansible nested loop to iterate through a hash of hashes
+  include_tasks: config.yml
+  vars:
+    _conf_section_name: "{{ _conf_section.0 }}"
+    _conf_options: "{{ _conf_section.1 }}"
+  # dict2items not available until 2.6, so use Jinja's dictsort instead
+  loop: "{{ st2_config | dictsort }}"
+  loop_control:
+    loop_var: _conf_section
+  tags: st2, config
+
+- name: Configure the StackStorm datastore
+  import_tasks: datastore.yml
+  tags: st2, datastore
+
+- name: Configure StackStorm to work via proxy
+  import_tasks: proxy.yml
+  tags: st2, proxy
+
+- name: Ensure StackStorm services are enabled and running
+  become: yes
+  service:
+    name: "{{ item }}"
+    enabled: yes
+    state: started
+  loop: "{{ st2_services }}"
+  tags: st2
