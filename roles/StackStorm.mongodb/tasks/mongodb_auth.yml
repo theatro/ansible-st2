@@ -3,16 +3,17 @@
   become: yes
   package:
     name:
-      - python-pip
+      - python-pip  # for the installation of pymongo
       - "{% if ansible_facts.os_family == 'RedHat' %}PyYAML{% else %}python-yaml{% endif %}"
     state: present
   tags: [databases, mongodb]
 
 - name: Install pymongo (for the mongodb_user module)
-  # pymongo 3.2+ is required to work with mongo 3.2+. system packages are too old.
+  # Use pip because system packages are too old for adequate mongodb support.
+  # https://docs.mongodb.com/ecosystem/drivers/driver-compatibility-reference/#python-driver-compatibility
   become: yes
   pip:
-    name: "pymongo=={{ mongodb_major_minor_version }}"
+    name: "pymongo>=3.10.1,<4.0.0"
   tags: [databases, mongodb]
 
 - name: See if mongodb authorization is enabled and users are configured
@@ -26,6 +27,13 @@
   register: _mongo_authorization
   changed_when: no # this does not change anything, it only checks
   failed_when: no # The rc determines whether or not auth is required to create/update the admin user
+  tags: [databases, mongodb]
+
+- name: Show mongodb auth check output
+  # the purpose of this task is to make sure task output is visible in travis if there are problems
+  debug:
+    var: _mongo_authorization
+    verbosity: 2
   tags: [databases, mongodb]
 
 - name: Warn about default credentials
