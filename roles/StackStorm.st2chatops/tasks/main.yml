@@ -7,7 +7,7 @@
 
 - name: "Install Node.js {{ st2chatops_nodejs_major_version }}"
   import_role:
-    name: nodejs
+    name: StackStorm.nodejs
   vars:
     nodejs_major_version: "{{ st2chatops_nodejs_major_version }}"
 
@@ -192,6 +192,23 @@
   no_log: true
   notify: restart st2chatops
   tags: st2chatops
+
+# Update proxy env vars in st2chatops service config file
+- name: Configure st2chatops to work via proxy
+  become: yes
+  lineinfile:
+    dest: /etc/{{ 'default' if ansible_facts.pkg_mgr == 'apt' else 'sysconfig' }}/{{ item.0 }}
+    create: yes
+    regexp: '^{{ item.1 }}='
+    line: "{{ item.1 }}={{ ansible_facts.env.get(item.1) }}"
+    # NB: Empty ENV var cast to 'None' string in Ansible
+    state: "{{ 'present' if ansible_facts.env.get(item.1, 'None') != 'None' else 'absent' }}"
+  vars:
+    _services: [st2chatops]
+    _proxy_vars: [http_proxy, https_proxy, no_proxy]
+  loop: '{{ _services|product(_proxy_vars)|list }}'
+  notify:
+    - restart st2chatops
 
 - name: Ensure st2chatops service is enabled and running
   become: yes

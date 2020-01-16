@@ -23,4 +23,4 @@ galaxy_info:
     - hubot
 dependencies:
   # explicitly run nodejs role as part of this role
-  - role: st2
+  - role: StackStorm.st2
