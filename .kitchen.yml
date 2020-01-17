@@ -12,7 +12,10 @@ provisioner:
   hosts: all
   roles_path: roles
   # copy the symlinks too (only copy_role_path does a recursive copy, nothing else does)
-  additional_copy_role_path: roles
+  # additional_copy_role_path: roles
+  # recursive_additional_copy_path:
+  additional_copy_role_path:
+    - roles
   ansible_verbose: true
   ansible_verbosity: 2
   idempotency_test: true
