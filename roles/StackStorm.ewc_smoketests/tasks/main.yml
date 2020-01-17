@@ -84,6 +84,5 @@
 
 - name: Teardown test artifacts
   include_tasks: teardown.yml
-  changed_when: no
   tags:
     - ewc-smoke-tests
