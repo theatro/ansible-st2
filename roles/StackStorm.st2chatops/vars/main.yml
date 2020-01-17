@@ -24,5 +24,7 @@ st2chatops_nodejs_versions:
 
 # The reject filter was added in Jinja 2.7, but CentOS 6 only has Jinja 2.6
 #st2chatops_nodejs_major_version: "{{ st2chatops_nodejs_versions[ st2chatops_nodejs_versions.keys() | sort | reject('version', st2_version_installed, '>') | list | last ] }}"
-_st2chatops_version: "{% set v = [] %}{% for st2v in st2chatops_nodejs_versions.keys() if st2v is version(st2_version_installed, '<=') %}{{ v.append(st2v) | default('', true) }}{% endfor %}{{ v | sort | last }}"
-st2chatops_nodejs_major_version: "{{ st2chatops_nodejs_versions[ _st2chatops_version ] }}"
+# This stopped working with newer ansible. So we have to go with an older, harder to read if/else chain.
+#_st2chatops_version: "{% set v = [] %}{% for st2v in st2chatops_nodejs_versions.keys() if st2v is version(st2_version_installed, '<=') %}{{ v.append(st2v) }}{% endfor %}{{ v | sort | last }}"
+#st2chatops_nodejs_major_version: "{{ st2chatops_nodejs_versions[ _st2chatops_version ] }}"
+st2chatops_nodejs_major_version: "{% if '2.10' is version(st2_version_installed, '<=') %}10{% elif '2.4' is version(st2_version_installed, '<=') %}6{% endif %}"
