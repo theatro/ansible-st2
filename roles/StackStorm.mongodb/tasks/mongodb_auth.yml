@@ -57,7 +57,7 @@
     # This does NOT include the mongo_auth_user.yml because of the
     # special omit handling of login_* when mongo auth is not enabled/configured
     login_host: "{{ mongodb_host }}"
-    login_port: "{{ mongodb_port }}"
+    login_port: "{{ mongodb_port | string }}"  # silence implicit int->str conversion warning
     login_user: "{{ (_mongo_authorization.rc == 0) | ternary(omit, mongodb_admin_username) }}"
     login_password: "{{ (_mongo_authorization.rc == 0) | ternary(omit, mongodb_admin_password) }}"
     login_database: "{{ (_mongo_authorization.rc == 0) | ternary(omit, mongodb_admin_db) }}"
@@ -100,7 +100,7 @@
 - name: Restart mongodb to enable auth before adding additional users
   # This allows us to safely assume auth is already enabled when adding more users
   when:
-    - mongodb_users
+    - mongodb_users | bool
     - _enable_mongo_auth is changed
   become: yes
   service:
