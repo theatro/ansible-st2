@@ -19,10 +19,10 @@ st2_version_installed: "{{ _st2_version_installed.stdout }}"
 # The value is the nodejs_major_version to install
 st2chatops_nodejs_versions:
   # 0-pad to preserve sorting
-  '2.04': 6 # >=6, <7
-  '2.10': 10 # >=8, <11
+  '2.04': '6' # >=6, <7
+  '2.10': '10' # >=8, <11
 
 # The reject filter was added in Jinja 2.7, but CentOS 6 only has Jinja 2.6
 #st2chatops_nodejs_major_version: "{{ st2chatops_nodejs_versions[ st2chatops_nodejs_versions.keys() | sort | reject('version', st2_version_installed, '>') | list | last ] }}"
-_st2chatops_version: "{% set v = [] %}{% for st2v in st2chatops_nodejs_versions.keys() if st2v is version(st2_version_installed, '<=') %}{{ v.append(st2v) }}{% endfor %}{{ v | sort | last }}"
+_st2chatops_version: "{% set v = [] %}{% for st2v in st2chatops_nodejs_versions.keys() if st2v is version(st2_version_installed, '<=') %}{{ v.append(st2v) | default('', true) }}{% endfor %}{{ v | sort | last }}"
 st2chatops_nodejs_major_version: "{{ st2chatops_nodejs_versions[ _st2chatops_version ] }}"
